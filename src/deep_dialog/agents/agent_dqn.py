@@ -287,6 +287,8 @@ class AgentDQN(Agent):
                 next_state_value, _ = self.target_dqn(torch.FloatTensor(batch.next_state)).max(1)
                 next_state_value = next_state_value.unsqueeze(1)
                 term = np.asarray(batch.term, dtype=np.float32)
+                print ("term---------------------:{}".format(term))
+                print ("TS term:-----------------:{}".format(torch.FloatTensor(term)))
                 expected_value = torch.FloatTensor(batch.reward) + self.gamma * next_state_value * (
                     1 - torch.FloatTensor(term))
 

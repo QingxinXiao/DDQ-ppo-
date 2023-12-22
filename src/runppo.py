@@ -423,10 +423,10 @@ def warm_start_simulation():
         # if len(agent.experience_replay_pool) >= agent.experience_replay_pool_size:
         #     break
 
-    if params['boosted']:
-        world_model.train(batch_size, num_batches=5)
-    else:
-        world_model.training_examples = []
+    # if params['boosted']:
+    #     world_model.train(batch_size, num_batches=5)
+    # else:
+    #     world_model.training_examples = []
 
     agent.warm_start = 2
     res['success_rate'] = float(successes) / warm_start_run_epochs
@@ -512,7 +512,7 @@ def run_episodes(count, status):
                 best_res['epoch'] = episode
 
             agent.ppo_train(batch_size, 1)
-            agent.reset_ppo_target()
+            # agent.reset_ppo_target()
 
             if params['train_world_model']:
                 print ("7--------------------")

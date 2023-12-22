@@ -66,8 +66,8 @@ class AgentPPO(Agent):
         # self.target_dqn.load_state_dict(self.dqn.state_dict())
         # self.target_dqn.eval()
         self.target_ppo = PPO(self.state_dimension, self.hidden_size, self.num_actions).to(DEVICE)
-        self.target_ppo.load_state_dict(self.actor_ppo.state_dict())
-        self.target_ppo.eval()
+        self.actor_ppo.load_state_dict(self.actor_ppo.state_dict())
+        self.actor_ppo.eval()
 
         self.actor_optimizer = optim.RMSprop(self.actor_ppo.parameters(), lr=1e-3)
         self.critic_optimizer = optim.RMSprop(self.critic_ppo.parameters(), lr=1e-3)
@@ -299,18 +299,19 @@ class AgentPPO(Agent):
         self.cur_bellman_err_planning = 0.
         self.running_expereince_pool = list(self.experience_replay_pool) + list(self.experience_replay_pool_from_model)
 
+        batch = self.sample_from_buffer(batch_size)
+
+        rewards = torch.FloatTensor(batch.reward)
+        next_state = torch.FloatTensor(batch.next_state)
+        term = np.asarray(batch.term, dtype=np.float32)
+        # print ("term------------------:{}".format(term))
+        td_target = rewards + self.gamma * self.critic_ppo(next_state) * (1 - torch.FloatTensor(term))
+
         for iter_batch in range(num_batches):
             # batch = self.sample_from_buffer(batch_size)
             # rewards = torch.FloatTensor(batch.reward, dtype=torch.float.view(-1, 1).to(self.device))
 
             for iter in range(len(self.running_expereince_pool) / batch_size):
-
-                batch = self.sample_from_buffer(batch_size)
-
-                rewards = torch.FloatTensor(batch.reward)
-                next_state = torch.FloatTensor(batch.next_state)
-                term = np.asarray(batch.term, dtype=np.float32)
-                td_target = rewards + self.gamma * self.critic_ppo(next_state) * (1 - torch.FloatTensor(term))
 
                 # print ("torch.Tensor(td_target)::{}-----self.critic_ppo(batch.state)::{}".format(torch.Tensor(td_target), self.critic_ppo(batch.state)))
                 td_delta = torch.Tensor(td_target) - self.critic_ppo(torch.FloatTensor(batch.state))
