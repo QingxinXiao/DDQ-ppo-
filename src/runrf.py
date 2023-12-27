@@ -205,8 +205,8 @@ elif agt == 4:
     agent = EchoAgent(movie_kb, act_set, slot_set, agent_params)
 elif agt == 5:
     agent = RequestBasicsAgent(movie_kb, act_set, slot_set, agent_params)
-elif agt == 9:
-    agent = AgentDQN(movie_kb, act_set, slot_set, agent_params)
+# elif agt == 9:
+    # agent = AgentDQN(movie_kb, act_set, slot_set, agent_params)
 elif agt == 7:
     agent = AgentRF(movie_kb, act_set, slot_set, agent_params)
 
